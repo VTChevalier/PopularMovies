@@ -19,8 +19,6 @@ public class ImageAdapter extends BaseAdapter {
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
     private Context mContext;
-    private LayoutInflater inflater;
-
 
     public ImageAdapter(Context c){
         mContext = c;
@@ -40,6 +38,22 @@ public class ImageAdapter extends BaseAdapter {
         return i;
     }
 
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View v = convertView;
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = li.inflate(R.layout.grid_item_movie, parent, false);
+            viewHolder = new ViewHolder(v);
+            v.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) v.getTag();
+        }
+        Picasso.with(mContext).load(eatFoodyImages[position]).into(viewHolder.mPoster);
+        return v;
+    }
+    /*
+}
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         ImageView imageView;
@@ -66,6 +80,7 @@ public class ImageAdapter extends BaseAdapter {
                 .into(imageView);
         return imageView;
     }
+    */
 
     public static String[] eatFoodyImages = {
             "http://i.imgur.com/rFLNqWI.jpg",
@@ -83,4 +98,12 @@ public class ImageAdapter extends BaseAdapter {
             "http://i.imgur.com/COzBnru.jpg",
             "http://i.imgur.com/Z3QjilA.jpg",
     };
+
+    public class ViewHolder {
+        public ImageView mPoster;
+
+        public ViewHolder(View rootView) {
+            mPoster = (ImageView) rootView;
+        }
+    }
 }
