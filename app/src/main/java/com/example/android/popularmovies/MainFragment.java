@@ -26,14 +26,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFragment extends Fragment {
     private final String LOG_TAG = MainFragment.class.getSimpleName();
 
     GridView mGridView;
     ImageAdapter mGridViewAdapter;
-    private String[] mMovieImages;
-
+    private List<MovieHolder> mMovieHolder = new ArrayList<MovieHolder>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,13 +45,13 @@ public class MainFragment extends Fragment {
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
         updateMovie();
         //Log.v(LOG_TAG, mMovieImages.toString());
-        mGridViewAdapter = new ImageAdapter(getActivity().getApplicationContext(), mMovieImages);
+        mGridViewAdapter = new ImageAdapter(getActivity().getApplicationContext(), mMovieHolder);
         mGridView.setAdapter(mGridViewAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String movie = mGridViewAdapter.getItem(position).toString();
-                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movie);
+                MovieHolder movie = (MovieHolder)mGridViewAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movie.mTitle);
                 startActivity(intent);
             }
         });
@@ -87,31 +88,22 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class PullMovieList extends AsyncTask<String, Void, String[]> {
+    public class PullMovieList extends AsyncTask<String, Void, List<MovieHolder>> {
 
         private final String LOG_TAG = PullMovieList.class.getSimpleName();
+        // TMDB JSON Tags
+        private final String TMDB_TITLE       = "title";
+        private final String TMDB_RELEASE_DATE= "release_date";
+        private final String TMDB_OVERVIEW    = "overview";
+        private final String TMDB_USER_RATING = "vote_average";
+        private final String TMDB_POSTER_PATH = "poster_path";
 
-        private String[] getPopMovieFromJson(String popMovieJsonStr)
-                throws JSONException {
+        private final String TMDB_PIC_PATH    = "https://image.tmdb.org/t/p/";
+        private final String TMDB_RESULTS     = "results";
+        private final String TMDB_PIC_SIZE    = "w342";
 
-            final String TMDB_PIC_SIZE = "w342";
-            final String TMDB_RESULTS = "results";
-            final String TMDB_POSTER_PATH = "poster_path";
-            JSONObject movieJson = new JSONObject(popMovieJsonStr);
-            JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
 
-            //String[] items = new String[movieArray.length()];
-            mMovieImages = new String[movieArray.length()];
-
-            for (int i = 0; i < movieArray.length(); i++) {
-                JSONObject eachMovie = movieArray.getJSONObject(i);
-                String picFileName = eachMovie.getString(TMDB_POSTER_PATH);
-                mMovieImages[i] = "http://image.tmdb.org/t/p/" + TMDB_PIC_SIZE + picFileName;
-            }
-            return mMovieImages;
-        }
-
-        protected String[] doInBackground(String... params) {
+        protected List<MovieHolder> doInBackground(String... params) {
             //if there's no rule of ordering,there is nothing to look up.Verify size of params.
             if (params.length == 0) {
                 return null;
@@ -124,8 +116,8 @@ public class MainFragment extends Fragment {
             String api_key = getString(R.string.api_key);
 
             try {
-                // The format is : http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=fffffffffffffffffffffffffffff
-                final String POP_MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+                // The format is : https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=fffffffffffffffffffffffffffff
+                final String POP_MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
                 final String SORT_BY = "sort_by";
                 final String API_KEY = "api_key";
 
@@ -174,7 +166,7 @@ public class MainFragment extends Fragment {
             }
 
             try {
-                return getPopMovieFromJson(popMovieJsonStr);
+                return parsePopularMovie(popMovieJsonStr);
             }
             catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -184,7 +176,26 @@ public class MainFragment extends Fragment {
             return null;
         }
 
-        protected void onPostExecute(String[] result) {
+        private List<MovieHolder> parsePopularMovie(String jsonStr)
+                throws JSONException {
+            JSONObject movieJson  = new JSONObject(jsonStr);
+            JSONArray  movieArray = movieJson.getJSONArray(TMDB_RESULTS);
+
+            mMovieHolder.clear();
+            for (int i = 0; i < movieArray.length(); i++) {
+                JSONObject eachMovie = movieArray.getJSONObject(i);
+                String title   = eachMovie.getString(TMDB_TITLE);
+                String rDate   = eachMovie.getString(TMDB_RELEASE_DATE);
+                String overview= eachMovie.getString(TMDB_OVERVIEW);
+                String rating  = eachMovie.getString(TMDB_USER_RATING);
+                String imgPath = TMDB_PIC_PATH + TMDB_PIC_SIZE + eachMovie.getString(TMDB_POSTER_PATH);
+
+                mMovieHolder.add(new MovieHolder(title, rDate, overview, rating, imgPath));
+            }
+            return mMovieHolder;
+        }
+
+        protected void onPostExecute(List<MovieHolder> result) {
             if (result != null) {
                 mGridViewAdapter.updateMovieList(result);
             }

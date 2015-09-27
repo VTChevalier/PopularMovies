@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Created by VTChevalier on 9/26/2015.
@@ -16,33 +18,24 @@ public class ImageAdapter extends BaseAdapter {
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
     private Context mContext;
-    private String[] mMovieImages;
+    private List<MovieHolder> mMovieHolder;
 
-    public ImageAdapter(Context context, String[] movieImages)
+    public ImageAdapter(Context context, List<MovieHolder> movieList)
     {
         super();
 
         mContext = context;
-        mMovieImages = movieImages;
+        mMovieHolder = movieList;
     }
 
     @Override
     public Object getItem(int i) {
-        String item = "";
-        if (mMovieImages != null) {
-            item = mMovieImages[i];
-        }
-        return item;
+        return mMovieHolder.get(i);
     }
 
     @Override
     public int getCount() {
-        int count = 0;
-        if (mMovieImages != null) {
-            count = mMovieImages.length;
-        }
-
-        return count;
+        return mMovieHolder.size();
     }
 
     @Override
@@ -50,35 +43,28 @@ public class ImageAdapter extends BaseAdapter {
         return i;
     }
 
-    public void updateMovieList(String[] movieImages)
+    public void updateMovieList(List<MovieHolder> movieList)
     {
-        mMovieImages = movieImages;
+        mMovieHolder = movieList;
         this.notifyDataSetChanged();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        View viewHolder = convertView;
-        //ViewHolder viewHolder;
+        MovieHolder movieHolder;
+        View moviePosterView = convertView;
+
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            viewHolder = li.inflate(R.layout.grid_item_movie, parent, false);
-            //viewHolder = new ViewHolder(v);
-            //v.setTag(viewHolder);
-        }// else {
-            //viewHolder = (ViewHolder) v.getTag();
-       // }
-        if (mMovieImages != null) {
-            Glide.with(mContext).load(mMovieImages[position]).into((ImageView) viewHolder);
+            moviePosterView = li.inflate(R.layout.grid_item_movie, parent, false);
+            movieHolder = new MovieHolder(moviePosterView);
+            moviePosterView.setTag(movieHolder);
         }
-        return viewHolder;
+        else {
+            movieHolder = (MovieHolder) moviePosterView.getTag();
+        }
+        Picasso.with(mContext).load(mMovieHolder.get(position).mImgPath).into((ImageView) moviePosterView);
+
+        return moviePosterView;
     }
 
-/*
-    public class ViewHolder {
-        public ImageView mPoster;
-
-        public ViewHolder(View rootView) {
-            mPoster = (ImageView) rootView;
-        }
-    }*/
 }
