@@ -39,12 +39,8 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Log.v(LOG_TAG, "onCreate()");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
-        updateMovie();
-        //Log.v(LOG_TAG, mMovieImages.toString());
         mGridViewAdapter = new ImageAdapter(getActivity().getApplicationContext(), mMovieHolder);
         mGridView.setAdapter(mGridViewAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -59,7 +55,7 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
-    private void updateMovie() {
+    private void updateMovieList() {
         PullMovieList movieList = new PullMovieList();
         movieList.execute("popularity.desc");
     }
@@ -67,9 +63,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.v(LOG_TAG, "onStart()");
-
-      //  updateMovie();
+        updateMovieList();
     }
 
     @Override
