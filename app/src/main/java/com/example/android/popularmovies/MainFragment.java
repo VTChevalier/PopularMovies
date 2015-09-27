@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -25,31 +26,39 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainFragment extends Fragment {
-    GridView mGridView;
+    private final String LOG_TAG = MainFragment.class.getSimpleName();
 
-    private static String[] mMovieImages = {
-            "http://image.tmdb.org/t/p/w342/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",
-            "http://image.tmdb.org/t/p/w342/7SGGUiTE6oc2fh9MjIk5M00dsQd.jpg",
-            "http://image.tmdb.org/t/p/w342/uXZYawqUsChGSj54wcuBtEdUJbh.jpg",
-            "http://image.tmdb.org/t/p/w342/s5uMY8ooGRZOL0oe4sIvnlTsYQO.jpg",
-            "http://image.tmdb.org/t/p/w342/aBBQSC8ZECGn6Wh92gKDOakSC8p.jpg"
-    };
+    GridView mGridView;
+    ImageAdapter mGridViewAdapter;
+    private String[] mMovieImages;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.v(LOG_TAG, "onCreate()");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
-
-        mGridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), mMovieImages));
+        updateMovie();
+        //Log.v(LOG_TAG, mMovieImages.toString());
+        mGridViewAdapter = new ImageAdapter(getActivity().getApplicationContext(), mMovieImages);
+        mGridView.setAdapter(mGridViewAdapter);
 
         return rootView;
     }
+
+    private void updateMovie() {
+        PullMovieList movieList = new PullMovieList();
+        movieList.execute("popularity.desc");
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+        Log.v(LOG_TAG, "onStart()");
+
+      //  updateMovie();
     }
 
     @Override
@@ -68,9 +77,9 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class pullMovieList extends AsyncTask<String, Void, String[]> {
+    public class PullMovieList extends AsyncTask<String, Void, String[]> {
 
-        private final String LOG_TAG = pullMovieList.class.getSimpleName();
+        private final String LOG_TAG = PullMovieList.class.getSimpleName();
 
         private String[] getPopMovieFromJson(String popMovieJsonStr)
                 throws JSONException {
@@ -81,17 +90,15 @@ public class MainFragment extends Fragment {
             JSONObject movieJson = new JSONObject(popMovieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
 
-            String[] items = new String[movieArray.length()];
+            //String[] items = new String[movieArray.length()];
+            mMovieImages = new String[movieArray.length()];
 
             for (int i = 0; i < movieArray.length(); i++) {
-//                Log.d(LOG_TAG, "ITEMS_VALUE" + items[i]);
-
                 JSONObject eachMovie = movieArray.getJSONObject(i);
                 String picFileName = eachMovie.getString(TMDB_POSTER_PATH);
-                items[i] = "http://image.tmdb.org/t/p/" + TMDB_PIC_SIZE + picFileName;
-                Log.d(LOG_TAG, "ITEMS_VALUE" + items[i]);
+                mMovieImages[i] = "http://image.tmdb.org/t/p/" + TMDB_PIC_SIZE + picFileName;
             }
-            return items;
+            return mMovieImages;
         }
 
         protected String[] doInBackground(String... params) {
@@ -107,7 +114,7 @@ public class MainFragment extends Fragment {
             String api_key = getString(R.string.api_key);
 
             try {
-                //The format is : http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=22fae03d55ebd9a2ad6df0f36e489087
+                // The format is : http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=fffffffffffffffffffffffffffff
                 final String POP_MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String SORT_BY = "sort_by";
                 final String API_KEY = "api_key";
@@ -123,6 +130,7 @@ public class MainFragment extends Fragment {
 
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
+
                 if (inputStream == null) {
                     return null;
                 }
@@ -137,10 +145,12 @@ public class MainFragment extends Fragment {
                 }
                 popMovieJsonStr = buffer.toString();
 
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 Log.e(LOG_TAG, "Error", e);
                 return null;
-            } finally {
+            }
+            finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
@@ -152,30 +162,23 @@ public class MainFragment extends Fragment {
                     }
                 }
             }
+
             try {
                 return getPopMovieFromJson(popMovieJsonStr);
-            } catch (JSONException e) {
+            }
+            catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
+
             return null;
         }
 
         protected void onPostExecute(String[] result) {
             if (result != null) {
-                //  System.arraycopy(result, 0, items, 0, result.length);
-                //gridView.setAdapter(new GridViewAdapter(getActivity(), items));
-        ///        gridViewAdapter.notifyDataSetChanged();
+                mGridViewAdapter.updateMovieList(result);
             }
-            /*
-                        if (result != null) {
-                mForecastAdapter.clear();
-                for(String dayForecastStr : result) {
-                    mForecastAdapter.add(dayForecastStr);
-                }
-                // New data is back from the server.  Hooray!
-            }
-             */
+
         }
     }
 }

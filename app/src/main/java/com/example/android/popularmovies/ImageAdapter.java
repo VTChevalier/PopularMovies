@@ -28,17 +28,32 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return mMovieImages[i];
+        String item = "";
+        if (mMovieImages != null) {
+            item = mMovieImages[i];
+        }
+        return item;
     }
 
     @Override
     public int getCount() {
-        return mMovieImages.length;
+        int count = 0;
+        if (mMovieImages != null) {
+            count = mMovieImages.length;
+        }
+
+        return count;
     }
 
     @Override
     public long getItemId(int i) {
         return i;
+    }
+
+    public void updateMovieList(String[] movieImages)
+    {
+        mMovieImages = movieImages;
+        this.notifyDataSetChanged();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -52,7 +67,9 @@ public class ImageAdapter extends BaseAdapter {
         }// else {
             //viewHolder = (ViewHolder) v.getTag();
        // }
-        Glide.with(mContext).load(mMovieImages[position]).into((ImageView)viewHolder);
+        if (mMovieImages != null) {
+            Glide.with(mContext).load(mMovieImages[position]).into((ImageView) viewHolder);
+        }
         return viewHolder;
     }
 
