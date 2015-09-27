@@ -1,4 +1,4 @@
-package com.example.android.gridviewe;
+package com.example.android.popularmovies;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

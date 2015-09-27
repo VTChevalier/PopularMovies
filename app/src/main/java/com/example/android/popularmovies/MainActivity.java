@@ -1,4 +1,4 @@
-package com.example.android.gridviewe;
+package com.example.android.popularmovies;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
