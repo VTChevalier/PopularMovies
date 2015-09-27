@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+
+import com.bumptech.glide.Glide;
 
 import java.util.Arrays;
 
@@ -39,18 +41,18 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        ViewHolder viewHolder;
+        View viewHolder = convertView;
+        //ViewHolder viewHolder;
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.grid_item_movie, parent, false);
-            viewHolder = new ViewHolder(v);
-            v.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) v.getTag();
-        }
-        Picasso.with(mContext).load(eatFoodyImages[position]).into(viewHolder.mPoster);
-        return v;
+            viewHolder = li.inflate(R.layout.grid_item_movie, parent, false);
+            //viewHolder = new ViewHolder(v);
+            //v.setTag(viewHolder);
+        }// else {
+            //viewHolder = (ViewHolder) v.getTag();
+       // }
+        Glide.with(mContext).load(eatFoodyImages[position]).into((ImageView)viewHolder);
+        return viewHolder;
     }
     /*
 }
@@ -98,12 +100,12 @@ public class ImageAdapter extends BaseAdapter {
             "http://i.imgur.com/COzBnru.jpg",
             "http://i.imgur.com/Z3QjilA.jpg",
     };
-
+/*
     public class ViewHolder {
         public ImageView mPoster;
 
         public ViewHolder(View rootView) {
             mPoster = (ImageView) rootView;
         }
-    }
+    }*/
 }
