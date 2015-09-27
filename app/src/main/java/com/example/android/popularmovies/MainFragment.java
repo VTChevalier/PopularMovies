@@ -50,22 +50,11 @@ public class MainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String movie = mGridViewAdapter.getItem(position).toString();
-                Log.v(LOG_TAG, "mGridViewAdapter.getItem(position): " + movie);
                 Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movie);
                 startActivity(intent);
             }
         });
 
-        /*
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String forecast = mForecastAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(intent);
-            }
-        });
-        */
         return rootView;
     }
 
@@ -203,12 +192,3 @@ public class MainFragment extends Fragment {
         }
     }
 }
-
-
-
-
-
-/*
-
-
- */

@@ -64,7 +64,6 @@ public class DetailActivity extends AppCompatActivity {
             // The detail Activity called via intent.  Inspect the intent for forecast data.
             Intent intent = getActivity().getIntent();
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            Log.v(LOG_TAG, "Forecast Text: " + intent.getStringExtra(Intent.EXTRA_TEXT));
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 mMovieStr = intent.getStringExtra(Intent.EXTRA_TEXT);
                 ((TextView) rootView.findViewById(R.id.detail_text))
