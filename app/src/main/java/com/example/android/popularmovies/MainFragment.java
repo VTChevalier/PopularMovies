@@ -11,13 +11,27 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 public class MainFragment extends Fragment {
+    GridView mGridView;
+
+    private static String[] mMovieImages = {
+            "http://image.tmdb.org/t/p/w342/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",
+            "http://image.tmdb.org/t/p/w342/7SGGUiTE6oc2fh9MjIk5M00dsQd.jpg",
+            "http://image.tmdb.org/t/p/w342/uXZYawqUsChGSj54wcuBtEdUJbh.jpg",
+            "http://image.tmdb.org/t/p/w342/s5uMY8ooGRZOL0oe4sIvnlTsYQO.jpg",
+            "http://image.tmdb.org/t/p/w342/aBBQSC8ZECGn6Wh92gKDOakSC8p.jpg"
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext()));
-        return view;
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        mGridView = (GridView) rootView.findViewById(R.id.gridview);
+
+        mGridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), mMovieImages));
+
+        return rootView;
     }
     @Override
     public void onStart() {
@@ -40,3 +54,12 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 }
+
+
+
+
+
+/*
+
+
+ */
