@@ -3,11 +3,13 @@ package com.example.android.popularmovies;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.Serializable;
+
 /**
  * Created by VTChevalier on 9/27/2015.
  */
 
-public class MovieHolder {
+public class MovieHolder implements Serializable {
     public String mTitle;
     public String mReleaseDate;
     public String mOverview;

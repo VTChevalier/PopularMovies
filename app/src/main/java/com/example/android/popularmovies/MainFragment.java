@@ -47,7 +47,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MovieHolder movie = (MovieHolder)mGridViewAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movie.mTitle);
+                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra("MovieHolder", movie);
                 startActivity(intent);
             }
         });

@@ -62,13 +62,9 @@ public class DetailActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             // The detail Activity called via intent.  Inspect the intent for forecast data.
-            Intent intent = getActivity().getIntent();
+            MovieHolder movie = (MovieHolder)getActivity().getIntent().getSerializableExtra("MovieHolder");
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                mMovieStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-                ((TextView) rootView.findViewById(R.id.detail_text))
-                        .setText(mMovieStr);
-            }
+            ((TextView) rootView.findViewById(R.id.detail_text)).setText(movie.mTitle);
 
             return rootView;
         }
