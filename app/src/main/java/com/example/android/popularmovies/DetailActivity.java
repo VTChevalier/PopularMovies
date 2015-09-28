@@ -10,7 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -41,9 +44,9 @@ public class DetailActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+       // if (id == R.id.action_settings) {
+       //     return true;
+        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -64,8 +67,13 @@ public class DetailActivity extends AppCompatActivity {
             // The detail Activity called via intent.  Inspect the intent for forecast data.
             MovieHolder movie = (MovieHolder)getActivity().getIntent().getSerializableExtra("MovieHolder");
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            ((TextView) rootView.findViewById(R.id.detail_text)).setText(movie.mTitle);
 
+            ((TextView) rootView.findViewById(R.id.movie_title)).setText(movie.mTitle);
+            ImageView moviePoster = (ImageView) rootView.findViewById(R.id.movie_image);
+            ((TextView) rootView.findViewById(R.id.movie_release_date)).setText("Released: " + movie.mReleaseDate);
+            ((TextView) rootView.findViewById(R.id.movie_user_rating)).setText("Viewer Rating: " + movie.mUserRating);
+            ((TextView) rootView.findViewById(R.id.movie_overview)).setText(movie.mOverview);
+            Picasso.with(getContext()).load(movie.mImgPath).into(moviePoster);
             return rootView;
         }
     }

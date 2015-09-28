@@ -76,9 +76,9 @@ public class MainFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+       // if (id == R.id.action_settings) {
+         //   return true;
+        //}
         return super.onOptionsItemSelected(item);
     }
 
@@ -106,7 +106,6 @@ public class MainFragment extends Fragment {
             BufferedReader reader = null;
 
             String popMovieJsonStr = null;
-            String sort_by = "popularity.desc";
             String api_key = getString(R.string.api_key);
 
             try {

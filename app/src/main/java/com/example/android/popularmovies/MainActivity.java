@@ -2,10 +2,17 @@ package com.example.android.popularmovies;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +29,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem mSpinnerItem = menu.findItem(R.id.sort_spinner);
+        View view = mSpinnerItem.getActionView();
+        if (view instanceof Spinner)
+        {
+            Log.v(LOG_TAG, "in the spinner");
+            Spinner spinner = (Spinner) view;
+            spinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.sort_array, android.R.layout.simple_spinner_dropdown_item));
+        }
+
+        //s.setOnItemSelectedListener(onItemSelectedListener); // set the listener, to perform actions based on item selection*/
         return true;
     }
 
@@ -33,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+      //  if (id == R.id.action_settings) {
+        //    return true;
+       // }
 
         return super.onOptionsItemSelected(item);
     }
