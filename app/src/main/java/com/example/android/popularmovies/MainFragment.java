@@ -29,8 +29,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment  {
     private final String LOG_TAG = MainFragment.class.getSimpleName();
+
+    private final String TMDB_SORT_POP    = "popularity.desc";
+    private final String TMDB_SORT_RATING = "vote_average.desc";
 
     GridView mGridView;
     ImageAdapter mGridViewAdapter;
@@ -55,15 +58,21 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
-    private void updateMovieList() {
+    public void updateMovieList(int selection) {
         PullMovieList movieList = new PullMovieList();
-        movieList.execute("popularity.desc");
+
+        if (selection == 0) {
+            movieList.execute(TMDB_SORT_POP);
+        }
+        else{
+            movieList.execute(TMDB_SORT_RATING);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateMovieList();
+        updateMovieList(0);
     }
 
     @Override

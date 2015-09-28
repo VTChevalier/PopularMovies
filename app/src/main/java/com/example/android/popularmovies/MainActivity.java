@@ -2,27 +2,31 @@ package com.example.android.popularmovies;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private MainFragment mMainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
+            mMainFragment = new MainFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
+                    .add(R.id.container, mMainFragment)
                     .commit();
         }
+    }
+    void showToast(CharSequence msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -32,14 +36,24 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem mSpinnerItem = menu.findItem(R.id.sort_spinner);
         View view = mSpinnerItem.getActionView();
-        if (view instanceof Spinner)
-        {
-            Log.v(LOG_TAG, "in the spinner");
+        if (view instanceof Spinner) {
             Spinner spinner = (Spinner) view;
             spinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.sort_array, android.R.layout.simple_spinner_dropdown_item));
-        }
 
-        //s.setOnItemSelectedListener(onItemSelectedListener); // set the listener, to perform actions based on item selection*/
+            // Set the ClickListener for Spinner
+            spinner.setOnItemSelectedListener(
+                    new AdapterView.OnItemSelectedListener() {
+                        public void onItemSelected(
+                                AdapterView<?> parent, View view, int position, long id) {
+                            mMainFragment.updateMovieList(position);
+                           // showToast("Spinner1: position=" + position + " id=" + id);
+                        }
+
+                        public void onNothingSelected(AdapterView<?> parent) {
+                           // showToast("Spinner1: unselected");
+                        }
+                    });
+        }
         return true;
     }
 
